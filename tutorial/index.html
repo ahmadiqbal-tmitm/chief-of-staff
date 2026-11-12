@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chief of Staff agent tutorial</title>
+<meta name="description" content="Build your own AI chief of staff in about an hour. No code. No technical background needed.">
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --surface: #ffffff;
+    --text: #1d1d1b;
+    --muted: #55534e;
+    --accent: #0b5cad;
+    --accent-soft: #e8f0fa;
+    --border: #dedad2;
+    --code-bg: #f3f1ec;
+    --box-bg: #fff8e6;
+    --box-border: #e9c46a;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161614;
+      --surface: #1f1f1c;
+      --text: #f2f0eb;
+      --muted: #bdb9b0;
+      --accent: #7db7f2;
+      --accent-soft: #1d2c3d;
+      --border: #3a3934;
+      --code-bg: #262622;
+      --box-bg: #2a2518;
+      --box-border: #8a7232;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.65;
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .skip-link {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--accent); color: #fff; padding: .6rem 1rem; z-index: 10;
+  }
+  .skip-link:focus { left: 1rem; top: 1rem; }
+
+  header.page-header {
+    max-width: 72rem; margin: 0 auto; padding: 3rem 1rem 1.5rem;
+  }
+  .eyebrow {
+    font-size: .85rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 .5rem;
+  }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin: 0 0 .75rem; }
+  .lede { font-size: 1.3rem; color: var(--muted); margin: 0; max-width: 40rem; }
+
+  .layout {
+    max-width: 72rem; margin: 0 auto; padding: 0 1rem 4rem;
+    display: grid; gap: 2.5rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 960px) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; }
+    aside.side { position: sticky; top: 1.5rem; align-self: start; }
+  }
+
+  main h2 {
+    font-size: 1.6rem; margin: 2.75rem 0 .75rem; line-height: 1.25;
+    padding-top: 1.25rem; border-top: 1px solid var(--border);
+  }
+  main h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+  main h3 { font-size: 1.2rem; margin: 1.75rem 0 .5rem; }
+  .time { font-weight: 400; color: var(--muted); font-size: 1rem; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .35rem 0; }
+
+  .why {
+    background: var(--accent-soft); border-radius: var(--radius);
+    padding: .9rem 1.1rem; margin: 1rem 0;
+  }
+  .why strong { color: var(--accent); }
+
+  dl.terms { margin: 0; }
+  dl.terms dt { font-weight: 700; margin-top: .9rem; }
+  dl.terms dd { margin: .15rem 0 0; color: var(--muted); }
+
+  .code-wrap {
+    position: relative; margin: 1rem 0 1.25rem;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .code-label {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .5rem .75rem .5rem 1rem; border-bottom: 1px solid var(--border);
+    font-size: .9rem; font-weight: 600; color: var(--muted);
+  }
+  pre {
+    margin: 0; padding: 1rem; overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: .95rem; line-height: 1.55; white-space: pre-wrap; word-wrap: break-word;
+  }
+  .copy-btn {
+    font: inherit; font-size: .9rem; font-weight: 600;
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: .35rem .8rem; cursor: pointer; min-height: 2.25rem;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .note {
+    border-left: 4px solid var(--accent); padding: .25rem 0 .25rem 1rem;
+    margin: 1rem 0; color: var(--muted);
+  }
+
+  aside.side .box {
+    background: var(--box-bg); border: 1px solid var(--box-border);
+    border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+  aside.side h2 { font-size: 1.15rem; margin: 0 0 .6rem; }
+  aside.side p { margin: 0 0 .7rem; }
+  aside.side ul { padding-left: 1.1rem; margin: 0; }
+
+  footer {
+    max-width: 72rem; margin: 0 auto; padding: 2rem 1rem 3rem;
+    border-top: 1px solid var(--border); color: var(--muted); font-size: 1rem;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#tutorial">Skip to the tutorial</a>
+
+<header class="page-header">
+  <p class="eyebrow">Agent #1 · Built in public</p>
+  <h1>Chief of Staff agent tutorial</h1>
+  <p class="lede">Build your own AI chief of staff in about an hour. No code. No technical background needed.</p>
+</header>
+
+<div class="layout">
+<main id="tutorial">
+
+  <h2 id="what">What you'll build</h2>
+  <p>A personal assistant inside Claude that:</p>
+  <ul>
+    <li>Gives you a <strong>morning briefing</strong>: today's meetings, the emails that need you, and what to do first.</li>
+    <li>Runs an <strong>end-of-day review</strong>: what you got done and what's first tomorrow.</li>
+    <li><strong>Sorts your inbox</strong>: flags what matters and suggests what to ignore.</li>
+    <li><strong>Drafts replies</strong> in your style for you to check.</li>
+    <li><strong>Thinks with you</strong> when you have a decision to make.</li>
+  </ul>
+  <p>It will <strong>never</strong> send an email, book a meeting or delete anything without asking you first.</p>
+
+  <h2 id="need">What you need</h2>
+  <ul>
+    <li>A Claude account on a plan that includes <strong>Projects</strong> and <strong>connectors</strong>. Check <a href="https://claude.com/pricing">claude.com/pricing</a>.</li>
+    <li>A <strong>Google account</strong> (Gmail and Google Calendar).</li>
+    <li>About <strong>60 minutes</strong>.</li>
+  </ul>
+
+  <h2 id="words">Four words you'll see</h2>
+  <dl class="terms">
+    <dt>Claude Project</dt>
+    <dd>A workspace in Claude with its own instructions. Think of it as a desk where your assistant always sits.</dd>
+    <dt>Instructions</dt>
+    <dd>The rules you write for your assistant, in plain English. Like a job description for a new hire.</dd>
+    <dt>Connector</dt>
+    <dd>A plug that lets Claude see an app, such as your calendar or email.</dd>
+    <dt>Prompt</dt>
+    <dd>A message you type to Claude. In this tutorial, you'll copy and paste them.</dd>
+  </dl>
+
+  <h2 id="step1">Step 1: Fill in your week <span class="time">(10 minutes)</span></h2>
+  <p>Before you touch Claude, answer these on paper or in a note. You'll paste the answers in Step 3.</p>
+  <ol>
+    <li>My work hours are: ___</li>
+    <li>Time I protect (family, exercise, rest): ___</li>
+    <li>My three biggest goals for the next three months: ___</li>
+    <li>Emails I always want flagged (a person, a company, a topic): ___</li>
+    <li>Emails I never want to see (promotions, newsletters): ___</li>
+    <li>What time I want my morning briefing: ___</li>
+  </ol>
+  <p class="why"><strong>Why this matters:</strong> your assistant can only protect what you tell it about.</p>
+
+  <h2 id="step2">Step 2: Create your Project <span class="time">(2 minutes)</span></h2>
+  <ol>
+    <li>Open <a href="https://claude.ai">claude.ai</a> and sign in.</li>
+    <li>Click <strong>Projects</strong>, then <strong>New project</strong>.</li>
+    <li>Name it <strong>Chief of Staff</strong>.</li>
+  </ol>
+
+  <h2 id="step3">Step 3: Paste your instructions <span class="time">(15 minutes)</span></h2>
+  <ol>
+    <li>In your new Project, find <strong>Instructions</strong> (sometimes called "Set project instructions").</li>
+    <li>Copy the template below.</li>
+    <li>Replace every <strong>___</strong> with your answers from Step 1.</li>
+    <li>Save.</li>
+  </ol>
+
+  <div class="code-wrap">
+    <div class="code-label"><span>Instructions template</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code># My Chief of Staff
+
+## Who I am
+My name is ___. I work as ___. Right now I am focused on ___.
+
+Your job is to be my chief of staff: keep me on track with my goals, protect my time, sort my inbox and help me think through decisions.
+
+Tone: direct, warm and short. Lead with what matters. No filler.
+
+## My time
+- Work hours: ___
+- Protected time (never book anything here): ___
+- Do not message me outside work hours unless it is urgent.
+
+## My goals (next three months)
+1. ___
+2. ___
+3. ___
+If I haven't worked on a goal for a few days, tell me plainly and suggest one next step.
+
+## My inbox
+- Always flag first: ___
+- Ignore and suggest I unsubscribe: ___
+- Summarise in one line: receipts, invoices and charges.
+- If you are unsure about an email, ask me. Remember my answer as a rule.
+
+## What you may do on your own
+- Read my calendar and email.
+- Summarise and draft replies.
+
+## What you must ask me before doing
+- Sending any email or message. Show me the full text first and wait for a clear yes.
+- Booking, accepting or declining meetings.
+- Creating or changing calendar events.
+- Deleting anything. Do it one item at a time.
+- Unsubscribing from anything.
+
+## Thinking with me
+When I bring you a decision, ask me one or two sharp questions first, starting with what I actually want. Then give me two or three options and your recommendation, with a one-line reason.
+
+## Morning briefing ("Run my morning briefing")
+1. Today's meetings, with one line of prep each.
+2. Anything I asked you to always flag.
+3. Up to five emails that need me, plus one line on charges.
+4. Any goal that is slipping, with one next step.
+5. One recommendation for what to do first.
+6. Emails you weren't sure about.
+
+## End-of-day review ("Run my end-of-day review")
+1. What I got done today.
+2. My top two to four tasks for tomorrow, in order.
+3. Anything at risk, and what to cut.
+
+## Getting better
+When something goes wrong, suggest a one-line change to these instructions that would fix it.</code></pre>
+  </div>
+  <p class="note"><strong>Tip:</strong> start small. You can add more rules later.</p>
+
+  <h2 id="step4">Step 4: Connect Gmail and Google Calendar <span class="time">(5 minutes)</span></h2>
+  <ol>
+    <li>In Claude, open <strong>Settings</strong>, then <strong>Connectors</strong>.</li>
+    <li>Find <strong>Gmail</strong> and click <strong>Connect</strong>. Sign in with Google and approve.</li>
+    <li>Do the same for <strong>Google Calendar</strong>.</li>
+    <li>Back in your Project, start a new chat and check that both are switched on in the tools menu.</li>
+  </ol>
+  <p class="why"><strong>Why this matters:</strong> without connectors, your assistant can't see your day.</p>
+
+  <h2 id="step5">Step 5: Run your first briefing <span class="time">(5 minutes)</span></h2>
+  <p>Start a new chat inside your Project and paste:</p>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Run my morning briefing.</code></pre>
+  </div>
+  <p>Read it carefully. Is anything wrong or missing? That's normal. Step 7 shows you how to fix it.</p>
+
+  <h2 id="step6">Step 6: Set a daily reminder <span class="time">(3 minutes)</span></h2>
+  <p>Your assistant won't start on its own. A calendar reminder makes it a habit.</p>
+  <ol>
+    <li>In Google Calendar, create an event at your briefing time from Step 1.</li>
+    <li>Call it <strong>Morning Brief</strong>. Set it to repeat every weekday.</li>
+    <li>In the description, write: <em>Open my Chief of Staff project and say "Run my morning briefing".</em></li>
+  </ol>
+  <p>Do the same for an <strong>End-of-day review</strong> 15 minutes before you finish work.</p>
+
+  <h2 id="step7">Step 7: Tune it for one week</h2>
+  <p>Your assistant will make mistakes in the first week. Each one is a chance to improve it. When something goes wrong, paste:</p>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>That wasn't right. Suggest a one-line change to my instructions that would fix it.</code></pre>
+  </div>
+  <p>Then copy the line into your Project instructions yourself.</p>
+
+  <h2 id="prompts">Copy-paste prompts</h2>
+  <p>Use these any time inside your Project.</p>
+
+  <h3>Morning briefing</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Run my morning briefing.</code></pre>
+  </div>
+
+  <h3>End-of-day review</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Run my end-of-day review.</code></pre>
+  </div>
+
+  <h3>Inbox clean-up</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Go through my inbox from the last two days. Show me what needs me, what's a receipt, and what I can ignore.</code></pre>
+  </div>
+
+  <h3>Draft a reply</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Draft a reply to the latest email from [name]. Keep it short. Don't send it.</code></pre>
+  </div>
+
+  <h3>Prepare for a meeting</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>I'm meeting [name] at [time]. What should I know, and what should I ask?</code></pre>
+  </div>
+
+  <h3>Make a decision</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>I need to decide [the decision]. Ask me two questions first, then give me options and your recommendation.</code></pre>
+  </div>
+
+  <h3>Protect my evening</h3>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Look at my calendar for this week. Is anything booked in my protected time?</code></pre>
+  </div>
+
+  <h2 id="voice">Optional: teach it how you write</h2>
+  <p>If you want drafts that sound like you, paste this:</p>
+  <div class="code-wrap">
+    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+<pre><code>Read my last 20 sent emails. Write a short voice guide describing how I write: how I open, how I close, sentence length, words I use and words I avoid. Show it to me before saving anything.</code></pre>
+  </div>
+  <p>Save the guide as a file in your Project, and add this line to your instructions: <em>"When drafting emails, follow my voice guide."</em></p>
+
+  <h2 id="safe">Staying safe</h2>
+  <ul>
+    <li>Your assistant asks before it sends, books or deletes. <strong>Keep it that way.</strong></li>
+    <li><strong>Read every draft in full</strong> before you say yes. Check names and spellings.</li>
+    <li>You can disconnect Gmail or Calendar at any time in <strong>Settings → Connectors</strong>.</li>
+  </ul>
+
+</main>
+
+<aside class="side" aria-label="About this build">
+  <section class="box">
+    <h2>Why I built this</h2>
+    <p>In November I left my job at Canva and started a year-long sabbatical. No manager. No team. No meetings unless I booked them.</p>
+    <p>I had big goals: build one AI agent a week, start a workshop business, read more, and spend real time with my son. What I didn't have was structure.</p>
+    <p>So I built a chief of staff. It keeps me on my projects, protects my family time, and cuts the noise from my inbox.</p>
+    <p>This is the first agent of many. I'm building them in public, and writing each one up so anyone can build it too.</p>
+  </section>
+
+  <section class="box">
+    <h2>What I learned</h2>
+    <ul>
+      <li><strong>The instructions are the agent.</strong> Most of the "building" was writing clear rules in plain English.</li>
+      <li><strong>Decide what it can do alone first.</strong> Mine can read and draft anything. It can't send, delete or book without my yes.</li>
+      <li><strong>It will get things wrong in week one.</strong> On day three it told me my day was empty. I had four meetings. One new rule fixed it.</li>
+      <li><strong>Read every email before it goes.</strong> It once spelt a contact's name wrong three times. I caught it because I read the final text.</li>
+      <li><strong>Protecting time is a feature.</strong> It flagged a late-night call clashing with my reading hour before I noticed.</li>
+      <li><strong>You stay in charge of the rules.</strong> The agent can suggest changes to its instructions, but only you can make them.</li>
+    </ul>
+  </section>
+</aside>
+</div>
+
+<footer>
+  <p>Built by Ahmad Iqbal as part of building one agent a week, in public. More at <a href="https://ahmads.build">ahmads.build</a>.</p>
+</footer>
+
+<p class="sr-only" aria-live="polite" id="copy-status"></p>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.closest('.code-wrap').querySelector('code').innerText;
+      var status = document.getElementById('copy-status');
+      function done(ok) {
+        btn.textContent = ok ? 'Copied' : 'Select and copy';
+        status.textContent = ok ? 'Copied to clipboard' : 'Copy failed. Select the text and copy it manually.';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 2000);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(function () { done(true); }, function () { done(false); });
+      } else {
+        try {
+          var r = document.createRange();
+          r.selectNodeContents(btn.closest('.code-wrap').querySelector('code'));
+          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+          done(document.execCommand('copy'));
+          s.removeAllRanges();
+        } catch (e) { done(false); }
+      }
+    });
+  });
+</script>
+</body>
+</html>
