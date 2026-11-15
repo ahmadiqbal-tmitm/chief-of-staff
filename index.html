@@ -5,154 +5,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chief of Staff agent tutorial</title>
 <meta name="description" content="Build your own AI chief of staff in about an hour. No code. No technical background needed.">
+<link rel="icon" type="image/png" href="https://ahmads.build/images/favicon.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" href="https://ahmads.build/images/favicon-light.png" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Shared Build 52 styles and phone menu, served from the main site so both sites stay in sync. -->
+<link rel="stylesheet" href="https://ahmads.build/assets/brand.css">
+<script src="https://ahmads.build/assets/site.js" defer></script>
 <style>
-  :root {
-    --bg: #fbfaf7;
-    --surface: #ffffff;
-    --text: #1d1d1b;
-    --muted: #55534e;
-    --accent: #0b5cad;
-    --accent-soft: #e8f0fa;
-    --border: #dedad2;
-    --code-bg: #f3f1ec;
-    --box-bg: #fff8e6;
-    --box-border: #e9c46a;
-    --radius: 12px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #161614;
-      --surface: #1f1f1c;
-      --text: #f2f0eb;
-      --muted: #bdb9b0;
-      --accent: #7db7f2;
-      --accent-soft: #1d2c3d;
-      --border: #3a3934;
-      --code-bg: #262622;
-      --box-bg: #2a2518;
-      --box-border: #8a7232;
-    }
-  }
-  * { box-sizing: border-box; }
+  /* Tutorial-only styles. Colours, type and buttons come from brand.css. */
   html { scroll-behavior: smooth; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 1.125rem;
-    line-height: 1.65;
-  }
-  a { color: var(--accent); text-underline-offset: 3px; }
-  a:focus-visible, button:focus-visible {
-    outline: 3px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-  .skip-link {
-    position: absolute; left: -9999px; top: 0;
-    background: var(--accent); color: #fff; padding: .6rem 1rem; z-index: 10;
-  }
-  .skip-link:focus { left: 1rem; top: 1rem; }
+  strong, b { font-weight: 600; }
 
-  header.page-header {
-    max-width: 72rem; margin: 0 auto; padding: 3rem 1rem 1.5rem;
-  }
-  .eyebrow {
-    font-size: .85rem; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 .5rem;
-  }
-  h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin: 0 0 .75rem; }
-  .lede { font-size: 1.3rem; color: var(--muted); margin: 0; max-width: 40rem; }
+  .tutorial-intro { padding: var(--space-24) 0 var(--space-12); }
+  .back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: var(--space-4); }
+  .tutorial-intro h1 { margin-top: var(--space-4); max-width: 18ch; }
+  .lede { margin-top: var(--space-6); font-size: 20px; line-height: 30px; }
 
   .layout {
-    max-width: 72rem; margin: 0 auto; padding: 0 1rem 4rem;
-    display: grid; gap: 2.5rem;
-    grid-template-columns: 1fr;
+    display: grid; gap: var(--space-12);
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: var(--space-12);
   }
-  @media (min-width: 960px) {
-    .layout { grid-template-columns: minmax(0, 1fr) 20rem; }
-    aside.side { position: sticky; top: 1.5rem; align-self: start; }
+  @media (min-width: 1025px) {
+    .layout { grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-24); }
   }
 
-  main h2 {
-    font-size: 1.6rem; margin: 2.75rem 0 .75rem; line-height: 1.25;
-    padding-top: 1.25rem; border-top: 1px solid var(--border);
-  }
-  main h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
-  main h3 { font-size: 1.2rem; margin: 1.75rem 0 .5rem; }
-  .time { font-weight: 400; color: var(--muted); font-size: 1rem; }
-  ul, ol { padding-left: 1.4rem; }
-  li { margin: .35rem 0; }
+  /* Reading column */
+  main { max-width: 720px; }
+  main h2 { margin-top: calc(var(--space-12) + var(--space-4)); }
+  main h2:first-child { margin-top: 0; }
+  main h3 { margin-top: var(--space-6); }
+  main p, main ul, main ol, main dl { margin: var(--space-4) 0 0; }
+  .time { font-size: 17px; line-height: 28px; font-weight: 400; letter-spacing: 0; color: var(--ink-muted); white-space: nowrap; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: var(--space-2) 0; max-width: var(--measure); }
+  li::marker { color: var(--ink-muted); }
 
+  dl.terms dt { font-weight: 600; margin-top: var(--space-4); }
+  dl.terms dd { margin: var(--space-1) 0 0; color: var(--ink-muted); max-width: var(--measure); }
+
+  /* "Why this matters" panels */
   .why {
-    background: var(--accent-soft); border-radius: var(--radius);
-    padding: .9rem 1.1rem; margin: 1rem 0;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-6);
   }
-  .why strong { color: var(--accent); }
+  main p.why { margin-top: var(--space-6); }
+  .note { color: var(--ink-muted); }
 
-  dl.terms { margin: 0; }
-  dl.terms dt { font-weight: 700; margin-top: .9rem; }
-  dl.terms dd { margin: .15rem 0 0; color: var(--muted); }
-
+  /* Prompt or code block */
   .code-wrap {
-    position: relative; margin: 1rem 0 1.25rem;
-    background: var(--code-bg); border: 1px solid var(--border);
-    border-radius: var(--radius);
+    margin: var(--space-6) 0 var(--space-6);
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-md);
   }
   .code-label {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: .5rem .75rem .5rem 1rem; border-bottom: 1px solid var(--border);
-    font-size: .9rem; font-weight: 600; color: var(--muted);
+    display: flex; justify-content: space-between; align-items: center; gap: var(--space-4);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);
   }
   pre {
-    margin: 0; padding: 1rem; overflow-x: auto;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: .95rem; line-height: 1.55; white-space: pre-wrap; word-wrap: break-word;
+    margin: 0; padding: var(--space-6);
+    font-family: var(--font-mono); font-size: 15px; line-height: 24px; font-weight: 400;
+    white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink);
   }
-  .copy-btn {
-    font: inherit; font-size: .9rem; font-weight: 600;
-    background: var(--surface); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: .35rem .8rem; cursor: pointer; min-height: 2.25rem;
-  }
-  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn { min-height: 44px; padding: 8px 16px; font-size: 15px; }
 
-  .note {
-    border-left: 4px solid var(--accent); padding: .25rem 0 .25rem 1rem;
-    margin: 1rem 0; color: var(--muted);
-  }
+  /* Sidebar build notes */
+  aside.side .card { gap: var(--space-4); font-size: 16px; line-height: 26px; }
+  aside.side .card + .card { margin-top: var(--space-4); }
+  aside.side h2 { font-size: 22px; line-height: 30px; letter-spacing: 0; }
+  aside.side ul { margin: 0; }
+  aside.side li { margin: var(--space-2) 0; }
 
-  aside.side .box {
-    background: var(--box-bg); border: 1px solid var(--box-border);
-    border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 1.5rem;
-    font-size: 1rem;
-  }
-  aside.side h2 { font-size: 1.15rem; margin: 0 0 .6rem; }
-  aside.side p { margin: 0 0 .7rem; }
-  aside.side ul { padding-left: 1.1rem; margin: 0; }
+  .build-note { padding-bottom: var(--space-24); }
 
-  footer {
-    max-width: 72rem; margin: 0 auto; padding: 2rem 1rem 3rem;
-    border-top: 1px solid var(--border); color: var(--muted); font-size: 1rem;
-  }
   .sr-only {
     position: absolute; width: 1px; height: 1px; overflow: hidden;
     clip: rect(0 0 0 0); white-space: nowrap;
   }
+
+  @media (max-width: 720px) {
+    .tutorial-intro { padding: var(--space-12) 0 var(--space-6); }
+    .lede { font-size: 17px; line-height: 28px; }
+    .build-note { padding-bottom: var(--space-12); }
+    main h2 { margin-top: var(--space-12); }
+    .why { padding: var(--space-4); }
+    .code-label { padding-left: var(--space-4); }
+    pre { padding: var(--space-4); }
+  }
 </style>
 </head>
 <body>
-<a class="skip-link" href="#tutorial">Skip to the tutorial</a>
+<a class="skip-link" href="#tutorial">Skip to content</a>
 
-<header class="page-header">
+<header class="site-header">
+  <nav class="nav container" aria-label="Main">
+    <a href="https://ahmads.build/" class="logo"><img src="https://ahmads.build/images/logo.png" alt="Build 52 by Ahmad Iqbal – home" width="107" height="32"></a>
+    <div class="nav-menu" id="nav-menu">
+      <a href="https://ahmads.build/about/">About</a>
+      <a href="https://ahmads.build/resources/" aria-current="page">Resources</a>
+      <a href="https://www.linkedin.com/in/ahmadiqbal1" class="btn btn-outline" target="_blank" rel="noopener">Follow on LinkedIn</a>
+    </div>
+    <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2LftEg_0td3W-pWEFQwLBZ6LC8GmgLlSoYkhCQzig38rFytq_mOt4pI7OCqQhuaOxfuIOIdP54" class="btn btn-primary">Book office hours</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+    </button>
+  </nav>
+</header>
+
+<div class="container">
+<header class="tutorial-intro">
+  <a href="https://ahmads.build/resources/" class="back">← Resources</a>
   <p class="eyebrow">Agent #1 · Built in public</p>
   <h1>Chief of Staff agent tutorial</h1>
   <p class="lede">Build your own AI chief of staff in about an hour. No code. No technical background needed.</p>
 </header>
 
 <div class="layout">
+<main id="tutorial">
 <main id="tutorial">
 
   <h2 id="what">What you'll build</h2>
@@ -213,7 +186,7 @@
   </ol>
 
   <div class="code-wrap">
-    <div class="code-label"><span>Instructions template</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Instructions template</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code># My Chief of Staff
 
 ## Who I am
@@ -284,7 +257,7 @@ When something goes wrong, suggest a one-line change to these instructions that 
   <h2 id="step5">Step 5: Run your first briefing <span class="time">(5 minutes)</span></h2>
   <p>Start a new chat inside your Project and paste:</p>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Run my morning briefing.</code></pre>
   </div>
   <p>Read it carefully. Is anything wrong or missing? That's normal. Step 7 shows you how to fix it.</p>
@@ -301,7 +274,7 @@ When something goes wrong, suggest a one-line change to these instructions that 
   <h2 id="step7">Step 7: Tune it for one week</h2>
   <p>Your assistant will make mistakes in the first week. Each one is a chance to improve it. When something goes wrong, paste:</p>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>That wasn't right. Suggest a one-line change to my instructions that would fix it.</code></pre>
   </div>
   <p>Then copy the line into your Project instructions yourself.</p>
@@ -311,50 +284,50 @@ When something goes wrong, suggest a one-line change to these instructions that 
 
   <h3>Morning briefing</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Run my morning briefing.</code></pre>
   </div>
 
   <h3>End-of-day review</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Run my end-of-day review.</code></pre>
   </div>
 
   <h3>Inbox clean-up</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Go through my inbox from the last two days. Show me what needs me, what's a receipt, and what I can ignore.</code></pre>
   </div>
 
   <h3>Draft a reply</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Draft a reply to the latest email from [name]. Keep it short. Don't send it.</code></pre>
   </div>
 
   <h3>Prepare for a meeting</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>I'm meeting [name] at [time]. What should I know, and what should I ask?</code></pre>
   </div>
 
   <h3>Make a decision</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>I need to decide [the decision]. Ask me two questions first, then give me options and your recommendation.</code></pre>
   </div>
 
   <h3>Protect my evening</h3>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Look at my calendar for this week. Is anything booked in my protected time?</code></pre>
   </div>
 
   <h2 id="voice">Optional: teach it how you write</h2>
   <p>If you want drafts that sound like you, paste this:</p>
   <div class="code-wrap">
-    <div class="code-label"><span>Prompt</span><button class="copy-btn" type="button">Copy</button></div>
+    <div class="code-label"><span>Prompt</span><button class="copy-btn btn btn-outline" type="button">Copy</button></div>
 <pre><code>Read my last 20 sent emails. Write a short voice guide describing how I write: how I open, how I close, sentence length, words I use and words I avoid. Show it to me before saving anything.</code></pre>
   </div>
   <p>Save the guide as a file in your Project, and add this line to your instructions: <em>"When drafting emails, follow my voice guide."</em></p>
@@ -367,9 +340,10 @@ When something goes wrong, suggest a one-line change to these instructions that 
   </ul>
 
 </main>
+</main>
 
 <aside class="side" aria-label="About this build">
-  <section class="box">
+  <section class="card">
     <h2>Why I built this</h2>
     <p>In November I left my job at Canva and started a year-long sabbatical. No manager. No team. No meetings unless I booked them.</p>
     <p>I had big goals: build one AI agent a week, start a workshop business, read more, and spend real time with my son. What I didn't have was structure.</p>
@@ -377,7 +351,7 @@ When something goes wrong, suggest a one-line change to these instructions that 
     <p>This is the first agent of many. I'm building them in public, and writing each one up so anyone can build it too.</p>
   </section>
 
-  <section class="box">
+  <section class="card">
     <h2>What I learned</h2>
     <ul>
       <li><strong>The instructions are the agent.</strong> Most of the "building" was writing clear rules in plain English.</li>
@@ -391,14 +365,36 @@ When something goes wrong, suggest a one-line change to these instructions that 
 </aside>
 </div>
 
-<footer>
-  <p>Built by Ahmad Iqbal as part of building one agent a week, in public. More at <a href="https://ahmads.build">ahmads.build</a>.</p>
+<p class="caption build-note">Built by Ahmad Iqbal as part of building one agent a week, in public. More at <a href="https://ahmads.build">ahmads.build</a>.</p>
+</div>
+
+<footer class="site-footer on-dark">
+  <div class="container">
+    <p class="main-line">From AI happening to you, to AI working for you.</p>
+    <ul class="footer-links">
+      <li><a href="https://ahmads.build/about/">About</a></li>
+      <li><a href="https://ahmads.build/resources/">Resources</a></li>
+      <li><a href="https://ahmads.build/office-hours/">Office hours</a></li>
+      <li><a href="https://www.linkedin.com/in/ahmadiqbal1" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+    <p class="copyright">© 2026 Ahmad Iqbal · ahmads.build</p>
+  </div>
 </footer>
 
 <p class="sr-only" aria-live="polite" id="copy-status"></p>
 
 <script>
   document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    // Give each Copy button a unique name for screen readers, e.g. "Copy prompt: Morning briefing".
+    var label = btn.closest('.code-label').querySelector('span');
+    var el = btn.closest('.code-wrap'), heading = null;
+    while (el && !heading) {
+      el = el.previousElementSibling;
+      if (el && /^H[23]$/.test(el.tagName)) heading = el;
+    }
+    var title = heading ? heading.cloneNode(true) : null;
+    if (title) title.querySelectorAll('.time').forEach(function (t) { t.remove(); });
+    if (label) btn.setAttribute('aria-label', 'Copy ' + label.textContent.trim().toLowerCase() + (title ? ': ' + title.textContent.trim() : ''));
     btn.addEventListener('click', function () {
       var code = btn.closest('.code-wrap').querySelector('code').innerText;
       var status = document.getElementById('copy-status');
