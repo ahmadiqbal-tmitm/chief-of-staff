@@ -11,8 +11,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Shared Build 52 styles and phone menu, served from the main site so both sites stay in sync. -->
-<link rel="stylesheet" href="https://ahmads.build/assets/brand.css?v=ed1ff551">
+<link rel="stylesheet" href="https://ahmads.build/assets/brand.css?v=e267f968">
 <script src="https://ahmads.build/assets/site.js?v=22e58986" defer></script>
+<script src="https://ahmads.build/assets/gate.js?v=80150e3e" defer></script>
 <style>
   /* Tutorial-only styles. Colours, type and buttons come from brand.css. */
   html { scroll-behavior: smooth; }
@@ -37,7 +38,7 @@
   /* Reading column */
   main { max-width: 720px; }
   main h2 { margin-top: calc(var(--space-12) + var(--space-4)); }
-  main h2:first-child { margin-top: 0; }
+  main > h2:first-child { margin-top: 0; }
   main h3 { margin-top: var(--space-6); }
   main p, main ul, main ol, main dl { margin: var(--space-4) 0 0; }
   .time { font-size: 17px; line-height: 28px; font-weight: 400; letter-spacing: 0; color: var(--ink-muted); white-space: nowrap; }
@@ -129,7 +130,6 @@
 
 <div class="layout">
 <main id="tutorial">
-<main id="tutorial">
 
   <h2 id="what">What you'll build</h2>
   <p>A personal assistant inside Claude that:</p>
@@ -160,6 +160,8 @@
     <dt>Prompt</dt>
     <dd>A message you type to Claude. In this tutorial, you'll copy and paste them.</dd>
   </dl>
+
+  <div data-gate="tutorial">
 
   <h2 id="step1">Step 1: Fill in your week <span class="time">(10 minutes)</span></h2>
   <p>Before you touch Claude, answer these on paper or in a note. You'll paste the answers in Step 3.</p>
@@ -342,7 +344,7 @@ When something goes wrong, suggest a one-line change to these instructions that 
     <li>You can disconnect Gmail or Calendar at any time in <strong>Settings → Connectors</strong>.</li>
   </ul>
 
-</main>
+  </div>
 </main>
 
 <aside class="side" aria-label="About this build">
