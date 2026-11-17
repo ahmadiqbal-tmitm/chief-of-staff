@@ -2,7 +2,9 @@
 
 **Build your own AI chief of staff in about an hour. No code needed.**
 
-👉 **Start the tutorial: [chiefofstaff.ahmads.build](https://chiefofstaff.ahmads.build)**
+👉 **Install it: [chiefofstaff.ahmads.build](https://chiefofstaff.ahmads.build)**
+
+👉 **Build your own, step by step: [chiefofstaff.ahmads.build/tutorial](https://chiefofstaff.ahmads.build/tutorial/)**
 
 ## What it is
 
