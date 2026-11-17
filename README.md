@@ -33,7 +33,7 @@ The site is hosted for free with GitHub Pages.
 
 ## How to use it
 
-1. Open the [tutorial](https://chiefofstaff.ahmads.build).
+1. Open the [tutorial](https://chiefofstaff.ahmads.build/tutorial/).
 2. Fill in your week (Step 1).
 3. Copy the instructions template into a new Claude Project and replace the blanks.
 4. Connect Gmail and Google Calendar.
